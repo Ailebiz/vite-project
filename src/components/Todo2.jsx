@@ -6,6 +6,7 @@ export default function ToDoList() {
     { taskName: "Гүл суару", completed: true },
     { taskName: "Күнделікті үй тапсырмасын орындау", completed: false }
   ]);
+  const [filter, setFilter] = useState("all"); 
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -22,19 +23,47 @@ export default function ToDoList() {
     setTasks(newTasks);
   };
 
+  const deleteTask = (index) => {
+    const updatedTasks = tasks.filter((_, i) => i !== index);
+    setTasks(updatedTasks);
+  };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter == "all") {
+      return true;
+    }
+    if (filter === "completed") 
+      return task.completed;
+    if (filter === "incompleted") 
+      return !task.completed;
+  });
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input value={task} type="text" onChange={(e) => setTask(e.target.value)} />
+        <input
+          value={task}
+          type="text"
+          onChange={(e) => setTask(e.target.value)}
+        />
         <button type="submit">Қосу</button>
       </form>
+      <div>
+        <button onClick={() => setFilter('all')}>All</button>
+        <button onClick={() => setFilter('completed')}>Completed</button>
+        <button onClick={() => setFilter('incompleted')}>Incompleted</button>
+      </div>
       <ul>
-        {tasks.map((task, index) => (
-          <li key={index} style={{ textDecoration: task.completed ? "line-through" : "none" }}>
+        {filteredTasks.map((task, index) => (
+          <li
+            key={index}
+            style={{ textDecoration: task.completed ? "line-through" : "none" }}
+          >
             {task.taskName}
             <button onClick={() => toggleComplete(index)}>
               {task.completed ? "🔄 Қайта бастау" : "✅ Аяқталды"}
             </button>
+            <button onClick={() => deleteTask(index)}>🗑</button>
           </li>
         ))}
       </ul>
